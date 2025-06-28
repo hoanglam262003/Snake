@@ -1,0 +1,76 @@
+
+# This .gitignore file is for Unity projects
+# Get the latest version from https://github.com/github/gitignore/blob/main/Unity.gitignore
+
+# =============== #
+# Unity Generated #
+# =============== #
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+[Uu]serSettings/
+.vscode/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.vs
+
+# ========== #
+# Crash Logs #
+# ========== #
+sysinfo.txt
+error.log
+crash.dmp
+
+# ========== #
+# OS Files   #
+# ========== #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# =================== #
+# Rider & JetBrains   #
+# =================== #
+.idea/
+*.sln.iml
+
+# ===================== #
+# Unity Collaborate     #
+# ===================== #
+.collab/
+
+# =================== #
+# Unity Cloud Build   #
+# =================== #
+.cloud/
+
+# ============= #
+# Asset Bundles #
+# ============= #
+*.unitypackage
+
+# ============ #
+# Local Config #
+# ============ #
+*.local
