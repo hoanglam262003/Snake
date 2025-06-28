@@ -6,6 +6,8 @@ public class PlayerLength : NetworkBehaviour
 {
     [SerializeField] private GameObject tailPrefab;
     public NetworkVariable<ushort> length = new(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public static event System.Action<ushort> ChangedLengthEvent;
+
     private List<GameObject> _tails;
     private Transform _lastTail;
     private Collider2D _collider2D;
@@ -27,12 +29,18 @@ public class PlayerLength : NetworkBehaviour
     {
         length.Value += 1;
         InstantiateTail();
+
+        if (!IsOwner) return;
+        ChangedLengthEvent?.Invoke(length.Value);
     }
 
     private void LengthChanged(ushort previousValue, ushort newValue)
     {
         Debug.Log($"LengthChanged Callback");
         InstantiateTail();
+
+        if (!IsOwner) return;
+        ChangedLengthEvent?.Invoke(length.Value);
     }
     private void InstantiateTail()
     {
