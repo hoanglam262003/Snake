@@ -5,7 +5,7 @@ using UnityEngine;
 public class FoodSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
-    private const int MaxPrefabCount = 50;
+    private const int MaxPrefabCount = 200;
     private void Start()
     {
         NetworkManager.Singleton.OnServerStarted += SpawnFoodStart;
@@ -19,7 +19,7 @@ public class FoodSpawner : MonoBehaviour
         {
             networkObject.Spawn(true);
         }
-        for (int i = 0; i < 30; ++i)
+        for (int i = 0; i < 80; ++i)
         {
             SpawnFood();
         }
@@ -41,7 +41,30 @@ public class FoodSpawner : MonoBehaviour
         {
             yield return new WaitForSeconds(2f);
             if (NetworkObjectPool.Singleton.GetCurrentPrefabCount(prefab) < MaxPrefabCount)
+            {
                 SpawnFood();
+                SpawnFoodNearAllPlayers();
+            }         
         }
     }
+    private void SpawnFoodNearAllPlayers()
+    {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+        foreach (GameObject player in players)
+        {
+            Vector3 nearPosition = GetRandomNearbyPosition(player.transform.position);
+            NetworkObject obj = NetworkObjectPool.Singleton.GetNetworkObject(prefab, nearPosition, Quaternion.identity);
+            obj.GetComponent<Food>().prefab = prefab;
+            if (!obj.IsSpawned) obj.Spawn(true);
+        }
+    }
+
+    private Vector3 GetRandomNearbyPosition(Vector3 center)
+    {
+        float offsetX = Random.Range(-9f, 9f);
+        float offsetY = Random.Range(-5f, 5f);
+        return new Vector3(center.x + offsetX, center.y + offsetY, 0f);
+    }
+
 }
