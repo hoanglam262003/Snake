@@ -24,7 +24,22 @@ public class PlayerLength : NetworkBehaviour
             InstantiateTail();
     }
 
-    [ContextMenu("Add Length")]
+    public override void OnNetworkDespawn()
+    {
+        base.OnNetworkDespawn();
+        DestroyTails();
+    }
+
+    private void DestroyTails()
+    {
+        while (_tails.Count > 0)
+        {
+            GameObject tail = _tails[0];
+            _tails.RemoveAt(0);
+            Destroy(tail);
+        }
+    }
+
     public void AddLength()
     {
         length.Value += 1;
@@ -36,11 +51,11 @@ public class PlayerLength : NetworkBehaviour
 
     private void LengthChanged(ushort previousValue, ushort newValue)
     {
-        Debug.Log($"LengthChanged Callback");
         InstantiateTail();
 
         if (!IsOwner) return;
         ChangedLengthEvent?.Invoke(length.Value);
+        ClientMusicPlayer.Instance.EatAudioClip();
     }
     private void InstantiateTail()
     {
