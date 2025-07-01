@@ -96,9 +96,11 @@ public class NetworkObjectPool : NetworkBehaviour
     /// </summary>
     public void ReturnNetworkObject(NetworkObject networkObject, GameObject prefab)
     {
+        Debug.Log($"[Return] Returning food to pool. Current count before: {nonPooledObjects[prefab]}");
         m_PooledObjects[prefab].Release(networkObject);
         if (nonPooledObjects.ContainsKey(prefab))
             nonPooledObjects[prefab] = Mathf.Max(0, nonPooledObjects[prefab] - 1);
+        Debug.Log($"[Return] Food returned. Current count after: {nonPooledObjects[prefab]}");
     }
 
     public int GetCurrentPrefabCount(GameObject prefab)
@@ -130,6 +132,7 @@ public class NetworkObjectPool : NetworkBehaviour
         void ActionOnRelease(NetworkObject networkObject)
         {
             networkObject.gameObject.SetActive(false);
+            networkObject.transform.position = Vector3.zero;
         }
 
         void ActionOnDestroy(NetworkObject networkObject)
@@ -148,7 +151,8 @@ public class NetworkObjectPool : NetworkBehaviour
         var prewarmNetworkObjects = new List<NetworkObject>();
         for (var i = 0; i < prewarmCount; i++)
         {
-            prewarmNetworkObjects.Add(m_PooledObjects[prefab].Get());
+            var obj = m_PooledObjects[prefab].Get();
+            m_PooledObjects[prefab].Release(obj);
         }
         foreach (var networkObject in prewarmNetworkObjects)
         {

@@ -4,20 +4,35 @@ using UnityEngine;
 public class Food : NetworkBehaviour
 {
     public GameObject prefab;
+    private FoodSpawner spawner;
+    public void Init(FoodSpawner foodSpawner)
+    {
+        spawner = foodSpawner;
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (!IsServer) return;
         if (!collision.CompareTag("Player")) return;
-        if (!NetworkManager.Singleton.IsServer) return;
+        if (!NetworkObject.IsSpawned) return;
+
         if (collision.TryGetComponent(out PlayerLength playerLength))
         {
             playerLength.AddLength();
         }
-        if (NetworkObject.IsSpawned)
-            NetworkObject.Despawn();
+
+        if (IsSpawned)
+        {
+            DespawnAndNotify();
+        }
     }
-    public void TrySpawn()
+
+    private void DespawnAndNotify()
     {
-        if (!NetworkObject.IsSpawned)
-            NetworkObject.Spawn(true);
+        if (!NetworkObject.IsSpawned) return;
+
+        NetworkObject.Despawn();
+        spawner?.TryRespawnFood();
     }
+
 }
